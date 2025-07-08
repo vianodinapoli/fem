@@ -1,15 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '../../../lib/prisma'
+// app/api/registos/route.ts
+import { NextResponse } from 'next/server'
+import { prisma } from '../../../lib/prisma' // ajuste o caminho se estiver diferente
 
 export async function GET() {
-  const registros = await prisma.registro.findMany({ orderBy: { id: 'desc' } })
-  return NextResponse.json(registros)
-}
-
-export async function DELETE(req: NextRequest) {
-  const { id } = await req.json()
-  if (!id) return NextResponse.json({ error: 'ID necessário' }, { status: 400 })
-
-  await prisma.registro.delete({ where: { id } })
-  return NextResponse.json({ success: true })
+  try {
+    const registos = await prisma.registro.findMany({
+      orderBy: { id: 'desc' },
+    })
+    return NextResponse.json(registos)
+  } catch (error) {
+    console.error('Erro ao buscar registos:', error)
+    return NextResponse.json({ message: 'Erro ao buscar registos' }, { status: 500 })
+  }
 }
