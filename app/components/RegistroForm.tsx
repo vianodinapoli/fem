@@ -37,6 +37,7 @@ export default function RegistroForm({
   }
 
   return (
+    
    <form
   key={registro?.id || 'novo'}
   ref={formRef}
@@ -56,7 +57,7 @@ export default function RegistroForm({
     </div>
 
     <div>
-      <label className="block text-sm font-medium mb-1">Código</label>
+      <label className="block text-sm font-medium mb-1">Referência</label>
       <input
         type="text"
         name="codigo"
@@ -78,7 +79,7 @@ export default function RegistroForm({
     </div>
 
     <div className="md:col-span-2">
-      <label className="block text-sm font-medium mb-1">Descrição</label>
+      <label className="block text-sm font-medium mb-1">Designação</label>
       <input
         type="text"
         name="descricao"
@@ -102,7 +103,7 @@ export default function RegistroForm({
     </div>
 
     <div className="md:col-span-3">
-      <label className="block text-sm font-medium mb-1">Observação</label>
+      <label className="block text-sm font-medium mb-1">Armazém</label>
       <textarea
         name="observacao"
         defaultValue={registro?.observacao}

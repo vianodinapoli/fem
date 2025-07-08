@@ -81,7 +81,7 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
-      <h1 className="text-2xl font-bold">{modoEdicao ? 'Editar Item' : 'Registrar Item'}</h1>
+      <h1 className="text-2xl font-bold">{modoEdicao ? 'Editar Item' : 'FEM - DONDO - STOCK'}</h1>
 
       <RegistroForm
         initial={registroSelecionado}
@@ -110,16 +110,16 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
                 Data {seta('data')}
               </th>
               <th className="border px-2 py-1 cursor-pointer" onClick={() => ordenar('codigo')}>
-                Código {seta('codigo')}
+                Referência {seta('codigo')}
               </th>
               <th className="border px-2 py-1 cursor-pointer" onClick={() => ordenar('quantidade')}>
-                Qtd {seta('quantidade')}
+                Quantidade {seta('quantidade')}
               </th>
               <th className="border px-2 py-1 cursor-pointer" onClick={() => ordenar('descricao')}>
-                Descrição {seta('descricao')}
+                Designação {seta('descricao')}
               </th>
               <th className="border px-2 py-1 cursor-pointer" onClick={() => ordenar('observacao')}>
-                Observação {seta('observacao')}
+                Armazém {seta('observacao')}
               </th>
               <th className="border px-2 py-1 cursor-pointer" onClick={() => ordenar('estado')}>
                 Estado {seta('estado')}
