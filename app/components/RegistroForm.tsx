@@ -37,79 +37,89 @@ export default function RegistroForm({
   }
 
   return (
-    <form
-      key={registro?.id || 'novo'} // <- essa linha força o React a reinicializar os campos ao mudar de registro
-      ref={formRef}
-      onSubmit={handleSubmit}
-      className="space-y-4 p-4 bg-white shadow rounded-xl"
-    >
-      <div>
-        <label>Data</label>
-        <input
-          type="date"
-          name="data"
-          defaultValue={registro?.data?.split('T')[0]}
-          required
-          className="w-full border p-2 rounded"
-        />
-      </div>
-      <div>
-        <label>Código</label>
-        <input
-          type="text"
-          name="codigo"
-          defaultValue={registro?.codigo}
-          required
-          className="w-full border p-2 rounded"
-        />
-      </div>
-      <div>
-        <label>Quantidade</label>
-        <input
-          type="number"
-          name="quantidade"
-          defaultValue={registro?.quantidade || 1}
-          required
-          className="w-full border p-2 rounded"
-        />
-      </div>
-      <div>
-        <label>Descrição</label>
-        <input
-          type="text"
-          name="descricao"
-          defaultValue={registro?.descricao}
-          required
-          className="w-full border p-2 rounded"
-        />
-      </div>
-      <div>
-        <label>Observação</label>
-        <textarea
-          name="observacao"
-          defaultValue={registro?.observacao}
-          className="w-full border p-2 rounded"
-        />
-      </div>
-      <div>
-        <label>Estado</label>
-        <select
-          name="estado"
-          defaultValue={registro?.estado || 'Novo'}
-          className="w-full border p-2 rounded"
-        >
-          <option value="Novo">Novo</option>
-          <option value="Bom">Bom</option>
-          <option value="Danificado">Danificado</option>
-        </select>
-      </div>
+   <form
+  key={registro?.id || 'novo'}
+  ref={formRef}
+  onSubmit={handleSubmit}
+  className="p-4 bg-white shadow rounded-xl space-y-4"
+>
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div>
+      <label className="block text-sm font-medium mb-1">Data</label>
+      <input
+        type="date"
+        name="data"
+        defaultValue={registro?.data?.split('T')[0]}
+        required
+        className="w-full border p-2 rounded"
+      />
+    </div>
 
-      <button
-        type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+    <div>
+      <label className="block text-sm font-medium mb-1">Código</label>
+      <input
+        type="text"
+        name="codigo"
+        defaultValue={registro?.codigo}
+        required
+        className="w-full border p-2 rounded"
+      />
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium mb-1">Quantidade</label>
+      <input
+        type="number"
+        name="quantidade"
+        defaultValue={registro?.quantidade || 1}
+        required
+        className="w-full border p-2 rounded"
+      />
+    </div>
+
+    <div className="md:col-span-2">
+      <label className="block text-sm font-medium mb-1">Descrição</label>
+      <input
+        type="text"
+        name="descricao"
+        defaultValue={registro?.descricao}
+        required
+        className="w-full border p-2 rounded"
+      />
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium mb-1">Estado</label>
+      <select
+        name="estado"
+        defaultValue={registro?.estado || 'Novo'}
+        className="w-full border p-2 rounded"
       >
-        {modoEdicao ? 'Atualizar' : 'Salvar'}
-      </button>
-    </form>
+        <option value="Novo">Novo</option>
+        <option value="Bom">Bom</option>
+        <option value="Danificado">Danificado</option>
+      </select>
+    </div>
+
+    <div className="md:col-span-3">
+      <label className="block text-sm font-medium mb-1">Observação</label>
+      <textarea
+        name="observacao"
+        defaultValue={registro?.observacao}
+        className="w-full border p-2 rounded"
+        rows={2}
+      />
+    </div>
+  </div>
+
+  <div className="pt-4">
+    <button
+      type="submit"
+      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+    >
+      {modoEdicao ? 'Atualizar' : 'Salvar'}
+    </button>
+  </div>
+</form>
   )
 }
