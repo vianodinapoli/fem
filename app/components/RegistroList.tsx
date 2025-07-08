@@ -15,9 +15,54 @@ type Registro = {
   estado: string
 }
 
+type SortKey = keyof Registro
+type SortOrder = 'asc' | 'desc'
+
 export default function RegistroList({ registros }: { registros: Registro[] }) {
   const [modoEdicao, setModoEdicao] = useState(false)
   const [registroSelecionado, setRegistroSelecionado] = useState<Registro | null>(null)
+
+  const [sortKey, setSortKey] = useState<SortKey>('data')
+  const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
+
+  const corEstado = {
+    Novo: 'bg-green-100 text-green-800',
+    Bom: 'bg-blue-100 text-blue-800',
+    Danificado: 'bg-red-100 text-red-800',
+  }
+
+  const ordenar = (chave: SortKey) => {
+    if (chave === sortKey) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortKey(chave)
+      setSortOrder('asc')
+    }
+  }
+
+  const registrosOrdenados = [...registros].sort((a, b) => {
+    const valorA = a[sortKey]
+    const valorB = b[sortKey]
+
+    if (typeof valorA === 'number' && typeof valorB === 'number') {
+      return sortOrder === 'asc' ? valorA - valorB : valorB - valorA
+    }
+
+    if (typeof valorA === 'string' && typeof valorB === 'string') {
+      // ordenação por data correta
+      if (sortKey === 'data') {
+        return sortOrder === 'asc'
+          ? new Date(valorA).getTime() - new Date(valorB).getTime()
+          : new Date(valorB).getTime() - new Date(valorA).getTime()
+      }
+
+      return sortOrder === 'asc'
+        ? valorA.localeCompare(valorB)
+        : valorB.localeCompare(valorA)
+    }
+
+    return 0
+  })
 
   function iniciarEdicao(registro: Registro) {
     setRegistroSelecionado(registro)
@@ -29,16 +74,13 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
     setModoEdicao(false)
   }
 
-  const corEstado = {
-    Novo: 'bg-green-100 text-green-800',
-    Bom: 'bg-blue-100 text-blue-800',
-    Danificado: 'bg-red-100 text-red-800',
+  const seta = (coluna: SortKey) => {
+    if (coluna !== sortKey) return ''
+    return sortOrder === 'asc' ? '🔼' : '🔽'
   }
 
-  
-
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-6xl mx-auto space-y-8">
       <h1 className="text-2xl font-bold">{modoEdicao ? 'Editar Item' : 'Registrar Item'}</h1>
 
       <RegistroForm
@@ -59,23 +101,34 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
 
       <ExportButtons registros={registros} />
 
-
       <div className="bg-white p-4 rounded-xl shadow overflow-x-auto">
         <h2 className="text-xl font-semibold mb-4">Registros</h2>
-        <table className="min-w-full border text-sm text-center min-w-full">
+        <table className="min-w-full border text-sm text-center">
           <thead className="bg-gray-100">
             <tr>
-              <th className="border px-2 py-1">Data</th>
-              <th className="border px-2 py-1">Código</th>
-              <th className="border px-2 py-1">Qtd</th>
-              <th className="border px-2 py-1">Descrição</th>
-              <th className="border px-2 py-1">Observação</th>
-              <th className="border px-2 py-1">Estado</th>
+              <th className="border px-2 py-1 cursor-pointer" onClick={() => ordenar('data')}>
+                Data {seta('data')}
+              </th>
+              <th className="border px-2 py-1 cursor-pointer" onClick={() => ordenar('codigo')}>
+                Código {seta('codigo')}
+              </th>
+              <th className="border px-2 py-1 cursor-pointer" onClick={() => ordenar('quantidade')}>
+                Qtd {seta('quantidade')}
+              </th>
+              <th className="border px-2 py-1 cursor-pointer" onClick={() => ordenar('descricao')}>
+                Descrição {seta('descricao')}
+              </th>
+              <th className="border px-2 py-1 cursor-pointer" onClick={() => ordenar('observacao')}>
+                Observação {seta('observacao')}
+              </th>
+              <th className="border px-2 py-1 cursor-pointer" onClick={() => ordenar('estado')}>
+                Estado {seta('estado')}
+              </th>
               <th className="border px-2 py-1">Ações</th>
             </tr>
           </thead>
           <tbody>
-            {registros.map((r) => (
+            {registrosOrdenados.map((r) => (
               <tr key={r.id}>
                 <td className="border px-2 py-1">{new Date(r.data).toLocaleDateString()}</td>
                 <td className="border px-2 py-1">{r.codigo}</td>
