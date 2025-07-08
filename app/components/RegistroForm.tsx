@@ -37,13 +37,14 @@ export default function RegistroForm({
   }
 
   return (
-    <form
-      key={registro?.id || 'novo'} // <- essa linha força o React a reinicializar os campos ao mudar de registro
-      ref={formRef}
-      onSubmit={handleSubmit}
-      className="space-y-4 p-4 bg-white shadow rounded-xl"
-    >
-      <div>
+  <form
+    key={registro?.id || 'novo'}
+    ref={formRef}
+    onSubmit={handleSubmit}
+    className="p-4 bg-white shadow rounded-xl space-y-4"
+  >
+    <div className="flex flex-wrap gap-4">
+      <div className="flex-1 min-w-[220px]">
         <label>Data</label>
         <input
           type="date"
@@ -53,7 +54,8 @@ export default function RegistroForm({
           className="w-full border p-2 rounded"
         />
       </div>
-      <div>
+
+      <div className="flex-1 min-w-[220px]">
         <label>Código</label>
         <input
           type="text"
@@ -63,7 +65,8 @@ export default function RegistroForm({
           className="w-full border p-2 rounded"
         />
       </div>
-      <div>
+
+      <div className="flex-1 min-w-[220px]">
         <label>Quantidade</label>
         <input
           type="number"
@@ -73,7 +76,8 @@ export default function RegistroForm({
           className="w-full border p-2 rounded"
         />
       </div>
-      <div>
+
+      <div className="flex-1 min-w-[220px]">
         <label>Descrição</label>
         <input
           type="text"
@@ -83,7 +87,8 @@ export default function RegistroForm({
           className="w-full border p-2 rounded"
         />
       </div>
-      <div>
+
+      <div className="flex-1 min-w-[220px]">
         <label>Observação</label>
         <textarea
           name="observacao"
@@ -91,7 +96,8 @@ export default function RegistroForm({
           className="w-full border p-2 rounded"
         />
       </div>
-      <div>
+
+      <div className="flex-1 min-w-[220px]">
         <label>Estado</label>
         <select
           name="estado"
@@ -103,13 +109,17 @@ export default function RegistroForm({
           <option value="Danificado">Danificado</option>
         </select>
       </div>
+    </div>
 
+    <div>
       <button
         type="submit"
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
       >
         {modoEdicao ? 'Atualizar' : 'Salvar'}
       </button>
-    </form>
+    </div>
+  </form>
+
   )
 }
