@@ -3,16 +3,16 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Registro {
-  id          Int      @id @default(autoincrement())
-  data        DateTime
-  codigo      String
-  quantidade  Int
-  descricao   String
-  observacao  String
-  estado      String
+  id         Int      @id @default(autoincrement())
+  data       DateTime
+  codigo     String
+  quantidade Int
+  descricao  String
+  observacao String
+  estado     String
 }
