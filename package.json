@@ -2,10 +2,10 @@
   "name": "nextjs-registro-app",
   "version": "1.0.0",
   "scripts": {
-    "dev": "next dev",
-    "build": "prisma generate && next build",
-    "start": "next start",
-    "prisma": "prisma"
+     "dev": "next dev",
+  "build": "prisma generate && next build",
+  "start": "next start",
+  "prisma": "prisma"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
