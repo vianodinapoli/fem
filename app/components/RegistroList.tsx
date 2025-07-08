@@ -60,9 +60,9 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
       <ExportButtons registros={registros} />
 
 
-      <div className="bg-white p-4 rounded-xl shadow">
+      <div className="bg-white p-4 rounded-xl shadow overflow-x-auto">
         <h2 className="text-xl font-semibold mb-4">Registros</h2>
-        <table className="w-full border text-sm text-center">
+        <table className="min-w-full border text-sm text-center min-w-full">
           <thead className="bg-gray-100">
             <tr>
               <th className="border px-2 py-1">Data</th>
