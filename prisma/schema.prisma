@@ -1,0 +1,18 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Registro {
+  id          Int      @id @default(autoincrement())
+  data        DateTime
+  codigo      String
+  quantidade  Int
+  descricao   String
+  observacao  String
+  estado      String
+}
