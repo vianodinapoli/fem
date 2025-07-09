@@ -1,5 +1,6 @@
 'use client'
 
+import { Pencil, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import RegistroForm from './RegistroForm'
 import { excluirRegistro } from '../actions/delete'
@@ -140,23 +141,25 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
                     {r.estado}
                   </span>
                 </td>
-                <td className="border px-2 py-1 space-x-2">
-                  <button
-                    onClick={() => iniciarEdicao(r)}
-                    className="text-blue-600 hover:underline"
-                  >
-                    Editar
-                  </button>
-                  <form action={excluirRegistro}>
-                    <input type="hidden" name="id" value={r.id} />
-                    <button
-                      type="submit"
-                      className="text-red-600 hover:underline"
-                    >
-                      Excluir
-                    </button>
-                  </form>
-                </td>
+               <td className="border px-2 py-1 space-x-2">
+  <button
+    onClick={() => iniciarEdicao(r)}
+    className="text-blue-600 hover:text-blue-800"
+    title="Editar"
+  >
+    <Pencil size={18} />
+  </button>
+  <form action={excluirRegistro} className="inline">
+    <input type="hidden" name="id" value={r.id} />
+    <button
+      type="submit"
+      className="text-red-600 hover:text-red-800"
+      title="Excluir"
+    >
+      <Trash2 size={18} />
+    </button>
+  </form>
+</td>
               </tr>
             ))}
           </tbody>
