@@ -1,10 +1,14 @@
 import './globals.css';
-import { ReactNode } from 'react';
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+import { Toaster } from 'react-hot-toast'
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className="bg-gray-50 text-gray-900 p-6">{children}</body>
+    <html lang="pt">
+      <body>
+        {children}
+        <Toaster position="top-right" reverseOrder={false} />
+      </body>
     </html>
-  );
+  )
 }

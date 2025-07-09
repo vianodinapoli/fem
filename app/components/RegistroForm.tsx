@@ -3,6 +3,7 @@
 import { useRef } from 'react'
 import { salvarRegistro } from '../actions/save'
 import { atualizarRegistro } from '../actions/update'
+import toast from 'react-hot-toast'
 
 type Props = {
   initial?: any
@@ -21,20 +22,27 @@ export default function RegistroForm({
   const registro = initial
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    const formData = new FormData(event.currentTarget)
+  event.preventDefault()
+  const formData = new FormData(event.currentTarget)
 
+  try {
     if (modoEdicao && registro?.id) {
       formData.append('id', registro.id.toString())
       await atualizarRegistro(formData)
+      toast.success('Registro atualizado com sucesso!')
     } else {
       await salvarRegistro(formData)
+      toast.success('Registro salvo com sucesso!')
     }
 
     formRef.current?.reset()
     setModoEdicao(false)
     setRegistro(null)
+  } catch (error) {
+    toast.error('Erro ao salvar o registro.')
+    console.error(error)
   }
+}
 
   return (
     
