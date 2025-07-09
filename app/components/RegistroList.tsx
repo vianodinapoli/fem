@@ -25,11 +25,22 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
 
   const [sortKey, setSortKey] = useState<SortKey>('data')
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
+  const [filtro, setFiltro] = useState('')
 
   const corEstado = {
     Novo: 'bg-green-100 text-green-800',
     Bom: 'bg-blue-100 text-blue-800',
     Danificado: 'bg-red-100 text-red-800',
+  }
+
+  function iniciarEdicao(registro: Registro) {
+    setRegistroSelecionado(registro)
+    setModoEdicao(true)
+  }
+
+  function cancelarEdicao() {
+    setRegistroSelecionado(null)
+    setModoEdicao(false)
   }
 
   const ordenar = (chave: SortKey) => {
@@ -41,7 +52,16 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
     }
   }
 
-  const registrosOrdenados = [...registros].sort((a, b) => {
+  const registrosFiltrados = registros.filter((r) => {
+    const termo = filtro.toLowerCase()
+    return (
+      r.codigo.toLowerCase().includes(termo) ||
+      r.descricao.toLowerCase().includes(termo) ||
+      r.observacao?.toLowerCase().includes(termo)
+    )
+  })
+
+  const registrosOrdenados = [...registrosFiltrados].sort((a, b) => {
     const valorA = a[sortKey]
     const valorB = b[sortKey]
 
@@ -50,13 +70,11 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
     }
 
     if (typeof valorA === 'string' && typeof valorB === 'string') {
-      // ordenação por data correta
       if (sortKey === 'data') {
         return sortOrder === 'asc'
           ? new Date(valorA).getTime() - new Date(valorB).getTime()
           : new Date(valorB).getTime() - new Date(valorA).getTime()
       }
-
       return sortOrder === 'asc'
         ? valorA.localeCompare(valorB)
         : valorB.localeCompare(valorA)
@@ -64,16 +82,6 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
 
     return 0
   })
-
-  function iniciarEdicao(registro: Registro) {
-    setRegistroSelecionado(registro)
-    setModoEdicao(true)
-  }
-
-  function cancelarEdicao() {
-    setRegistroSelecionado(null)
-    setModoEdicao(false)
-  }
 
   const seta = (coluna: SortKey) => {
     if (coluna !== sortKey) return ''
@@ -100,10 +108,24 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
         </button>
       )}
 
-      <ExportButtons registros={registros} />
+      <ExportButtons registros={registrosFiltrados} />
 
       <div className="bg-white p-4 rounded-xl shadow overflow-x-auto">
-        <h2 className="text-xl font-semibold mb-4">Registros</h2>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2 gap-2">
+          <h2 className="text-xl font-semibold">Registros</h2>
+          <input
+            type="text"
+            placeholder="Filtrar por referência, designação ou armazém..."
+            value={filtro}
+            onChange={(e) => setFiltro(e.target.value)}
+            className="border p-2 rounded w-full md:w-64"
+          />
+        </div>
+
+        <p className="text-sm text-gray-500 mb-2">
+          {registrosFiltrados.length} registro(s) encontrado(s)
+        </p>
+
         <table className="min-w-full border text-sm text-center">
           <thead className="bg-gray-100">
             <tr>
@@ -137,29 +159,33 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
                 <td className="border px-2 py-1">{r.descricao}</td>
                 <td className="border px-2 py-1">{r.observacao}</td>
                 <td className="border px-2 py-1">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${corEstado[r.estado as keyof typeof corEstado]}`}>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      corEstado[r.estado as keyof typeof corEstado]
+                    }`}
+                  >
                     {r.estado}
                   </span>
                 </td>
-               <td className="border px-2 py-1 space-x-2">
-  <button
-    onClick={() => iniciarEdicao(r)}
-    className="text-blue-600 hover:text-blue-800"
-    title="Editar"
-  >
-    <Pencil size={18} />
-  </button>
-  <form action={excluirRegistro} className="inline">
-    <input type="hidden" name="id" value={r.id} />
-    <button
-      type="submit"
-      className="text-red-600 hover:text-red-800"
-      title="Excluir"
-    >
-      <Trash2 size={18} />
-    </button>
-  </form>
-</td>
+                <td className="border px-2 py-1 space-x-2">
+                  <button
+                    onClick={() => iniciarEdicao(r)}
+                    className="text-blue-600 hover:text-blue-800"
+                    title="Editar"
+                  >
+                    <Pencil size={18} />
+                  </button>
+                  <form action={excluirRegistro} className="inline">
+                    <input type="hidden" name="id" value={r.id} />
+                    <button
+                      type="submit"
+                      className="text-red-600 hover:text-red-800"
+                      title="Excluir"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </form>
+                </td>
               </tr>
             ))}
           </tbody>
