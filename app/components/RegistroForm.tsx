@@ -67,7 +67,7 @@ export default function RegistroForm({
     />
   </div>
 
-  <div className="flex flex-col w-[120px]">
+  <div className="flex flex-col w-[140px]">
     <label className="text-sm font-medium mb-1">Quantidade</label>
     <input
       type="number"
@@ -78,7 +78,7 @@ export default function RegistroForm({
     />
   </div>
 
-  <div className="flex flex-col w-[180px]">
+  <div className="flex flex-col w-[140px]">
     <label className="text-sm font-medium mb-1">Designação</label>
     <input
       type="text"
@@ -102,13 +102,13 @@ export default function RegistroForm({
     </select>
   </div>
 
-  <div className="flex flex-col w-[200px]">
+  <div className="flex flex-col w-[140px]">
     <label className="text-sm font-medium mb-1">Armazém</label>
     <textarea
       name="observacao"
       defaultValue={registro?.observacao}
       className="border p-2 rounded"
-      rows={2}
+      rows={1}
     />
   </div>
    <div className="pt-4">
