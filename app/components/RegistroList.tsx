@@ -5,6 +5,7 @@ import { useState } from 'react'
 import RegistroForm from './RegistroForm'
 import { excluirRegistro } from '../actions/delete'
 import ExportButtons from './ExportButtons'
+import Modal from '../components/Modal'
 
 type Registro = {
   id: number
@@ -22,25 +23,17 @@ type SortOrder = 'asc' | 'desc'
 export default function RegistroList({ registros }: { registros: Registro[] }) {
   const [modoEdicao, setModoEdicao] = useState(false)
   const [registroSelecionado, setRegistroSelecionado] = useState<Registro | null>(null)
-
   const [sortKey, setSortKey] = useState<SortKey>('data')
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
   const [filtro, setFiltro] = useState('')
+  const [paginaAtual, setPaginaAtual] = useState(1)
+  const porPagina = 19
+  const [registroParaExcluir, setRegistroParaExcluir] = useState<Registro | null>(null)
 
   const corEstado = {
     Novo: 'bg-green-100 text-green-800',
     Bom: 'bg-blue-100 text-blue-800',
     Danificado: 'bg-red-100 text-red-800',
-  }
-
-  function iniciarEdicao(registro: Registro) {
-    setRegistroSelecionado(registro)
-    setModoEdicao(true)
-  }
-
-  function cancelarEdicao() {
-    setRegistroSelecionado(null)
-    setModoEdicao(false)
   }
 
   const ordenar = (chave: SortKey) => {
@@ -83,9 +76,25 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
     return 0
   })
 
+  const totalPaginas = Math.ceil(registrosOrdenados.length / porPagina)
+  const registrosPaginados = registrosOrdenados.slice(
+    (paginaAtual - 1) * porPagina,
+    paginaAtual * porPagina
+  )
+
   const seta = (coluna: SortKey) => {
     if (coluna !== sortKey) return ''
     return sortOrder === 'asc' ? '🔼' : '🔽'
+  }
+
+  function iniciarEdicao(registro: Registro) {
+    setRegistroSelecionado(registro)
+    setModoEdicao(true)
+  }
+
+  function cancelarEdicao() {
+    setRegistroSelecionado(null)
+    setModoEdicao(false)
   }
 
   return (
@@ -117,7 +126,10 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
             type="text"
             placeholder="Filtrar por referência, designação ou armazém..."
             value={filtro}
-            onChange={(e) => setFiltro(e.target.value)}
+            onChange={(e) => {
+              setFiltro(e.target.value)
+              setPaginaAtual(1)
+            }}
             className="border p-2 rounded w-full md:w-64"
           />
         </div>
@@ -151,8 +163,11 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
             </tr>
           </thead>
           <tbody>
-            {registrosOrdenados.map((r) => (
-              <tr key={r.id}>
+            {registrosPaginados.map((r, i) => (
+              <tr
+                key={r.id}
+                className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50 hover:bg-gray-100'}
+              >
                 <td className="border px-2 py-1">{new Date(r.data).toLocaleDateString()}</td>
                 <td className="border px-2 py-1">{r.codigo}</td>
                 <td className="border px-2 py-1">{r.quantidade}</td>
@@ -175,22 +190,71 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
                   >
                     <Pencil size={18} />
                   </button>
-                  <form action={excluirRegistro} className="inline">
+                  <button
+                    onClick={() => setRegistroParaExcluir(r)}
+                    className="text-red-600 hover:text-red-800"
+                    title="Excluir"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                  <form id={`form-excluir-${r.id}`} action={excluirRegistro} method="post" className="hidden">
                     <input type="hidden" name="id" value={r.id} />
-                    <button
-                      type="submit"
-                      className="text-red-600 hover:text-red-800"
-                      title="Excluir"
-                    >
-                      <Trash2 size={18} />
-                    </button>
                   </form>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+
+        <div className="flex justify-between items-center mt-4 text-sm">
+          <span>
+            Página {paginaAtual} de {totalPaginas}
+          </span>
+          <div className="space-x-2">
+            <button
+              onClick={() => setPaginaAtual(1)}
+              disabled={paginaAtual === 1}
+              className="px-2 py-1 border rounded disabled:opacity-50"
+            >
+              ⏮ Início
+            </button>
+            <button
+              onClick={() => setPaginaAtual((p) => Math.max(p - 1, 1))}
+              disabled={paginaAtual === 1}
+              className="px-2 py-1 border rounded disabled:opacity-50"
+            >
+              ◀ Anterior
+            </button>
+            <button
+              onClick={() => setPaginaAtual((p) => Math.min(p + 1, totalPaginas))}
+              disabled={paginaAtual === totalPaginas}
+              className="px-2 py-1 border rounded disabled:opacity-50"
+            >
+              Próxima ▶
+            </button>
+            <button
+              onClick={() => setPaginaAtual(totalPaginas)}
+              disabled={paginaAtual === totalPaginas}
+              className="px-2 py-1 border rounded disabled:opacity-50"
+            >
+              Fim ⏭
+            </button>
+          </div>
+        </div>
       </div>
+
+      {registroParaExcluir && (
+        <Modal
+          titulo="Confirmar exclusão"
+          descricao={`Tem certeza que deseja excluir o item "${registroParaExcluir.codigo}"?`}
+          onConfirm={() => {
+             setRegistroParaExcluir(null) // Fecha o modal imediatamente
+            const form = document.getElementById(`form-excluir-${registroParaExcluir.id}`) as HTMLFormElement
+            if (form) form.requestSubmit()
+          }}
+          onCancel={() => setRegistroParaExcluir(null)}
+        />
+      )}
     </div>
   )
 }
