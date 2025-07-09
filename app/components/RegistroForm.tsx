@@ -45,7 +45,7 @@ export default function RegistroForm({
   className="p-4 bg-white shadow rounded-xl space-y-4"
 >
   <div className="w-full flex flex-wrap justify-center items-end gap-4">
-  <div className="flex flex-col w-[140px]">
+  <div className="flex flex-col w-[150px]">
     <label className="text-sm font-medium mb-1">Data</label>
     <input
       type="date"
@@ -67,7 +67,7 @@ export default function RegistroForm({
     />
   </div>
 
-  <div className="flex flex-col w-[140px]">
+  <div className="flex flex-col w-[100px]">
     <label className="text-sm font-medium mb-1">Quantidade</label>
     <input
       type="number"
@@ -78,7 +78,7 @@ export default function RegistroForm({
     />
   </div>
 
-  <div className="flex flex-col w-[140px]">
+  <div className="flex flex-col w-[180px]">
     <label className="text-sm font-medium mb-1">Designação</label>
     <input
       type="text"
@@ -89,7 +89,7 @@ export default function RegistroForm({
     />
   </div>
 
-  <div className="flex flex-col w-[140px]">
+  <div className="flex flex-col w-[150px]">
     <label className="text-sm font-medium mb-1">Estado</label>
     <select
       name="estado"
