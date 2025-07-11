@@ -641,7 +641,7 @@ video {
   border-radius: 0.25rem;
 }
 .rounded-full {
-  border-radius: 9999px;
+  border-radius: 0px;
 }
 .rounded-xl {
   border-radius: 0.75rem;
