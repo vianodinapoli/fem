@@ -1,11 +1,13 @@
 'use client'
 
+import { useState, useEffect, useRef } from 'react'
 import { Pencil, Trash2 } from 'lucide-react'
-import { useState } from 'react'
 import RegistroForm from './RegistroForm'
 import { excluirRegistro } from '../actions/delete'
 import ExportButtons from './ExportButtons'
 import Modal from '../components/Modal'
+
+// Tipagem
 
 type Registro = {
   id: number
@@ -18,25 +20,28 @@ type Registro = {
 }
 
 type SortKey = keyof Registro
-type SortOrder = 'asc' | 'desc'
 
 export default function RegistroList({ registros }: { registros: Registro[] }) {
   const [modoEdicao, setModoEdicao] = useState(false)
   const [registroSelecionado, setRegistroSelecionado] = useState<Registro | null>(null)
   const [sortKey, setSortKey] = useState<SortKey>('data')
-  const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
   const [filtro, setFiltro] = useState('')
   const [paginaAtual, setPaginaAtual] = useState(1)
   const porPagina = 19
   const [registroParaExcluir, setRegistroParaExcluir] = useState<Registro | null>(null)
+  const [ultimaAtualizacao, setUltimaAtualizacaoState] = useState<Date | null>(null)
 
-  // 🟡 Função para formatar a data em DD/MM/AAAA
-  function formatarData(data: string) {
-    const d = new Date(data)
-    const dia = String(d.getDate()).padStart(2, '0')
-    const mes = String(d.getMonth() + 1).padStart(2, '0')
-    const ano = d.getFullYear()
-    return `${dia}/${mes}/${ano}`
+  useEffect(() => {
+    const saved = localStorage.getItem('ultimaAtualizacao')
+    if (saved) {
+      setUltimaAtualizacaoState(new Date(saved))
+    }
+  }, [])
+
+  function setUltimaAtualizacao(date: Date) {
+    setUltimaAtualizacaoState(date)
+    localStorage.setItem('ultimaAtualizacao', date.toISOString())
   }
 
   const corEstado = {
@@ -108,13 +113,16 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
-      <h1 className="text-2xl font-bold">{modoEdicao ? 'Editar Item' : 'FEM - DONDO - STOCK'}</h1>
+      <h1 className="text-2xl font-bold">
+        {modoEdicao ? 'Editar Item' : 'FEM - DONDO - STOCK'}
+      </h1>
 
       <RegistroForm
         initial={registroSelecionado}
         modoEdicao={modoEdicao}
         setModoEdicao={setModoEdicao}
         setRegistro={setRegistroSelecionado}
+        setUltimaAtualizacao={setUltimaAtualizacao}
       />
 
       {modoEdicao && (
@@ -142,6 +150,15 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
             className="border p-2 rounded w-full md:w-64"
           />
         </div>
+        {ultimaAtualizacao && (
+          <p className="text-sm text-gray-500 text-right mt-4">
+            Atualizado em {ultimaAtualizacao.toLocaleDateString('pt-PT')} às{' '}
+            {ultimaAtualizacao.toLocaleTimeString('pt-PT', {
+              hour: '2-digit',
+              minute: '2-digit'
+            })}
+          </p>
+        )}
 
         <p className="text-sm text-gray-500 mb-2">
           {registrosFiltrados.length} registro(s) encontrado(s)
@@ -177,16 +194,14 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
                 key={r.id}
                 className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50 hover:bg-gray-100'}
               >
-                <td className="border px-2 py-1">{formatarData(r.data)}</td>
+                <td className="border px-2 py-1">{new Date(r.data).toLocaleDateString('pt-PT')}</td>
                 <td className="border px-2 py-1">{r.codigo}</td>
                 <td className="border px-2 py-1">{r.quantidade}</td>
                 <td className="border px-2 py-1">{r.descricao}</td>
                 <td className="border px-2 py-1">{r.observacao}</td>
                 <td className="border px-2 py-1">
                   <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      corEstado[r.estado as keyof typeof corEstado]
-                    }`}
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${corEstado[r.estado as keyof typeof corEstado]}`}
                   >
                     {r.estado}
                   </span>
@@ -250,6 +265,8 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
             </button>
           </div>
         </div>
+
+        
       </div>
 
       {registroParaExcluir && (
@@ -259,7 +276,10 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
           onConfirm={() => {
             setRegistroParaExcluir(null)
             const form = document.getElementById(`form-excluir-${registroParaExcluir.id}`) as HTMLFormElement
-            if (form) form.requestSubmit()
+            if (form) {
+              form.requestSubmit()
+              setUltimaAtualizacao(new Date())
+            }
           }}
           onCancel={() => setRegistroParaExcluir(null)}
         />
