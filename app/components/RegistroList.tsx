@@ -30,6 +30,15 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
   const porPagina = 19
   const [registroParaExcluir, setRegistroParaExcluir] = useState<Registro | null>(null)
 
+  // 🟡 Função para formatar a data em DD/MM/AAAA
+  function formatarData(data: string) {
+    const d = new Date(data)
+    const dia = String(d.getDate()).padStart(2, '0')
+    const mes = String(d.getMonth() + 1).padStart(2, '0')
+    const ano = d.getFullYear()
+    return `${dia}/${mes}/${ano}`
+  }
+
   const corEstado = {
     Novo: 'bg-green-100 text-green-800',
     Bom: 'bg-blue-100 text-blue-800',
@@ -168,7 +177,7 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
                 key={r.id}
                 className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50 hover:bg-gray-100'}
               >
-                <td className="border px-2 py-1">{new Date(r.data).toLocaleDateString()}</td>
+                <td className="border px-2 py-1">{formatarData(r.data)}</td>
                 <td className="border px-2 py-1">{r.codigo}</td>
                 <td className="border px-2 py-1">{r.quantidade}</td>
                 <td className="border px-2 py-1">{r.descricao}</td>
@@ -248,7 +257,7 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
           titulo="Confirmar exclusão"
           descricao={`Tem certeza que deseja excluir o item "${registroParaExcluir.codigo}"?`}
           onConfirm={() => {
-             setRegistroParaExcluir(null) // Fecha o modal imediatamente
+            setRegistroParaExcluir(null)
             const form = document.getElementById(`form-excluir-${registroParaExcluir.id}`) as HTMLFormElement
             if (form) form.requestSubmit()
           }}
