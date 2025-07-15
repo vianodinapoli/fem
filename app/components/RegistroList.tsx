@@ -221,7 +221,7 @@ export default function RegistroList({ registros }: { registros: Registro[] }) {
                   >
                     <Trash2 size={18} />
                   </button>
-                  <form id={`form-excluir-${r.id}`} action={excluirRegistro} method="post" className="hidden">
+                  <form id={`form-excluir-${r.id}`} action={excluirRegistro}  className="hidden">
                     <input type="hidden" name="id" value={r.id} />
                   </form>
                 </td>
